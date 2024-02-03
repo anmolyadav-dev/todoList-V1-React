@@ -36,6 +36,12 @@ const Card = () => {
     inputRefs.current[taskId].disabled = !inputRefs.current[taskId].disabled;
   };
 
+  const handleKeyDown = (event, taskId) => {
+    if (event.key === "Enter") {
+      // Trigger Save button click
+      document.getElementById(`saveButton-${taskId}`).click();
+    }
+  };
   return (
     <div className="bg-white/30 rounded-lg backdrop-blur-sm text-2xl flex flex-col max-w-[60rem] w-[50rem] justify-start items-center p-10 ">
       <h1 className="mb-10 text-5xl font-semibold uppercase text-white">
@@ -89,6 +95,7 @@ const Card = () => {
                 }}
                 readOnly={!isEditable[task.id]}
                 ref={(inputRef) => (inputRefs.current[task.id] = inputRef)}
+                onKeyDown={(e) => handleKeyDown(e, task.id)}
               ></input>
             </div>
 
@@ -104,6 +111,7 @@ const Card = () => {
 
             <div className="flex gap-4">
               <button
+                id={`saveButton-${task.id}`}
                 className="ml-5 px-3 py-1 bg-blue-600 text-white rounded-md text-xl"
                 onClick={() => {
                   if (task.completed)
