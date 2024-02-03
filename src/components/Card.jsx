@@ -1,32 +1,63 @@
 import { RiCheckFill } from "@remixicon/react";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 const Card = () => {
-  const [tasks, setTasks] = useState([]);
+  // using local storage
+  const saveTasksToLocalStorage = (tasks) => {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+  };
+
+  const getTasksFromLocalStorage = () => {
+    const storedTasks = localStorage.getItem("tasks");
+    return storedTasks ? JSON.parse(storedTasks) : [];
+  };
+
+  // .......................................................................
+
+  const [tasks, setTasks] = useState(getTasksFromLocalStorage);
+
   const [newTask, setNewTask] = useState("");
   const [isEditable, setIsEditable] = useState({});
   const inputRefs = useRef({});
+  //   ------------------------
+  useEffect(() => {
+    // This effect runs once when the component mounts
+    saveTasksToLocalStorage(tasks);
+  }, [tasks]);
+
+  //   ----------------------------
+  //    ADD TASKS
   const addTask = () => {
     if (newTask.trim() !== "") {
       const taskId = Date.now();
-      setTasks([{ id: taskId, text: newTask, completed: false }, ...tasks]);
+      const newTasks = [
+        { id: taskId, text: newTask, completed: false },
+        ...tasks,
+      ];
+      setTasks(newTasks);
       setIsEditable((prev) => ({ ...prev, [taskId]: false }));
       setNewTask("");
+      saveTasksToLocalStorage(newTasks); //setting task to local storage
     }
-    // setTasks((prev) => [
-    //   { id: Date.now(), text: prev, completed: false },
-    //   ...prev,
-    // ]);
   };
+  //
+  // ------update tasks
   const updateTask = (taskId, newTask) => {
-    setTasks((prev) =>
-      prev.map((prevTask) => (prevTask.id === taskId ? newTask : prevTask))
+    const newTasks = tasks.map((prevTask) =>
+      prevTask.id === taskId ? newTask : prevTask
     );
-  };
-  const deleteTask = (taskId) => {
-    setTasks((prev) => prev.filter((prevTask) => prevTask.id !== taskId));
+    setTasks(newTasks);
+    saveTasksToLocalStorage(newTasks);
   };
 
+  //   --------------DELETE TASKS
+  const deleteTask = (taskId) => {
+    const newTasks = tasks.filter((prevTask) => prevTask.id !== taskId);
+    setTasks(newTasks);
+    saveTasksToLocalStorage(newTasks);
+  };
+
+  //   ----------------TOGGLE TASKS
   const toggleTask = (taskId) => {
     setTasks(
       tasks.map((task) =>
@@ -36,6 +67,7 @@ const Card = () => {
     inputRefs.current[taskId].disabled = !inputRefs.current[taskId].disabled;
   };
 
+  //   ----------------
   const handleKeyDown = (event, taskId) => {
     if (event.key === "Enter") {
       // Trigger Save button click
@@ -95,7 +127,7 @@ const Card = () => {
                 }}
                 readOnly={!isEditable[task.id]}
                 ref={(inputRef) => (inputRefs.current[task.id] = inputRef)}
-                onKeyDown={(e) => handleKeyDown(e, task.id)}
+                onKeyDown={(e) => handleKeyDown(e, task.id)} // this is so that when pressed enter it clicks save button
               ></input>
             </div>
 
@@ -111,7 +143,7 @@ const Card = () => {
 
             <div className="flex gap-4">
               <button
-                id={`saveButton-${task.id}`}
+                id={`saveButton-${task.id}`} //this is so that when pressed enter it works
                 className="ml-5 px-3 py-1 bg-blue-600 text-white rounded-md text-xl"
                 onClick={() => {
                   if (task.completed)
