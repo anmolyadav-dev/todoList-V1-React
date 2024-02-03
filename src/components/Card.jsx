@@ -37,8 +37,11 @@ const Card = () => {
   };
 
   return (
-    <div className="bg-slate-500 text-2xl flex flex-col max-w-[60rem] w-[40rem] justify-start items-center p-10 ">
-      <h1 className="mb-10 text-5xl font-semibold uppercase"> Todo List</h1>
+    <div className="bg-white/30 rounded-lg backdrop-blur-sm text-2xl flex flex-col max-w-[60rem] w-[50rem] justify-start items-center p-10 ">
+      <h1 className="mb-10 text-5xl font-semibold uppercase text-white">
+        {" "}
+        Todo List
+      </h1>
       <form
         className="flex gap-5 w-full text-2xl"
         onSubmit={(e) => {
@@ -79,7 +82,7 @@ const Card = () => {
               <input
                 className={`${
                   task.completed ? "line-through text-gray-400" : "text-white"
-                } bg-transparent border-blue-300    `}
+                } bg-transparent  outline-none  focus:border-blue-500 focus:border-b-2 focus:backdrop-blur-sm focus:bg-white/30 focus:rounded-md p-2`}
                 value={task.text}
                 onChange={(e) => {
                   updateTask(task.id, { ...task, text: e.target.value });
@@ -99,21 +102,30 @@ const Card = () => {
               </span>
             )}
 
-            <button
-              className="ml-5 px-3 py-1 bg-blue-600 text-white rounded-md text-xl"
-              onClick={() => {
-                if (task.completed)
-                  setIsEditable((prev) => ({ ...prev, [task.id]: false }));
-                else if (!task.completed) {
-                  setIsEditable((prev) => ({
-                    ...prev,
-                    [task.id]: !prev[task.id],
-                  }));
-                }
-              }}
-            >
-              {isEditable[task.id] ? "Save" : "Edit"}
-            </button>
+            <div className="flex gap-4">
+              <button
+                className="ml-5 px-3 py-1 bg-blue-600 text-white rounded-md text-xl"
+                onClick={() => {
+                  if (task.completed)
+                    setIsEditable((prev) => ({ ...prev, [task.id]: false }));
+                  else if (!task.completed) {
+                    inputRefs.current[task.id].focus();
+                    setIsEditable((prev) => ({
+                      ...prev,
+                      [task.id]: !prev[task.id],
+                    }));
+                  }
+                }}
+              >
+                {isEditable[task.id] ? "Save" : "Edit "}
+              </button>
+              <button
+                className="ml-5 px-3 py-1 bg-blue-600 text-white rounded-md text-xl"
+                onClick={() => deleteTask(task.id)}
+              >
+                Delete
+              </button>
+            </div>
           </li>
         ))}
       </ul>
