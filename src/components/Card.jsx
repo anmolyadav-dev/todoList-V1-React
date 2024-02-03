@@ -1,13 +1,16 @@
 import { RiCheckFill } from "@remixicon/react";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 
 const Card = () => {
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState("");
-
+  const [isEditable, setIsEditable] = useState({});
+  const inputRefs = useRef({});
   const addTask = () => {
     if (newTask.trim() !== "") {
-      setTasks([{ id: Date.now(), text: newTask, completed: false }, ...tasks]);
+      const taskId = Date.now();
+      setTasks([{ id: taskId, text: newTask, completed: false }, ...tasks]);
+      setIsEditable((prev) => ({ ...prev, [taskId]: false }));
       setNewTask("");
     }
     // setTasks((prev) => [
@@ -30,6 +33,7 @@ const Card = () => {
         task.id === taskId ? { ...task, completed: !task.completed } : task
       )
     );
+    inputRefs.current[taskId].disabled = !inputRefs.current[taskId].disabled;
   };
 
   return (
@@ -72,14 +76,17 @@ const Card = () => {
                 className=" appearance-none h-5 w-5 border border-blue-500 rounded-sm flex cursor-pointer relative checked:bg-blue-500"
                 //   style={{ backgroundColor: task.completed ? "blue" : "gray" }}
               />
-              <span
-                className={
+              <input
+                className={`${
                   task.completed ? "line-through text-gray-400" : "text-white"
-                }
-                htmlFor={task.id}
-              >
-                {task.text}
-              </span>
+                } bg-transparent border-blue-300    `}
+                value={task.text}
+                onChange={(e) => {
+                  updateTask(task.id, { ...task, text: e.target.value });
+                }}
+                readOnly={!isEditable[task.id]}
+                ref={(inputRef) => (inputRefs.current[task.id] = inputRef)}
+              ></input>
             </div>
 
             {task.completed && (
@@ -94,9 +101,18 @@ const Card = () => {
 
             <button
               className="ml-5 px-3 py-1 bg-blue-600 text-white rounded-md text-xl"
-              onClick={() => deleteTask(task.id)}
+              onClick={() => {
+                if (task.completed)
+                  setIsEditable((prev) => ({ ...prev, [task.id]: false }));
+                else if (!task.completed) {
+                  setIsEditable((prev) => ({
+                    ...prev,
+                    [task.id]: !prev[task.id],
+                  }));
+                }
+              }}
             >
-              Delete
+              {isEditable[task.id] ? "Save" : "Edit"}
             </button>
           </li>
         ))}
