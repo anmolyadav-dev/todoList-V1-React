@@ -75,13 +75,13 @@ const Card = () => {
     }
   };
   return (
-    <div className="bg-white/30 rounded-lg backdrop-blur-sm text-2xl flex flex-col max-w-[60rem] w-[50rem] justify-start items-center p-10 ">
-      <h1 className="mb-10 text-5xl font-semibold uppercase text-white">
+    <div className="bg-white/30 rounded-lg backdrop-blur-sm text-2xl flex flex-col sm:max-w-[60rem] sm:w-[50rem] mobile:w-[25rem] justify-start items-center p-10 ">
+      <h1 className="mb-10 text-5xl font-semibold uppercase text-white mobile:text-3xl">
         {" "}
         Todo List
       </h1>
       <form
-        className="flex gap-5 w-full text-2xl"
+        className="flex gap-5 w-full text-2xl mobile:flex-col sm:flex-row"
         onSubmit={(e) => {
           e.preventDefault(); // Prevents the default form submission behavior
           addTask(); // Your custom form submission logic
@@ -107,20 +107,20 @@ const Card = () => {
         {tasks.map((task) => (
           <li
             key={task.id}
-            className="flex  justify-between pl-10  mb-3 border-b-2 pb-2 border-gray-400 items-center relative w-full    "
+            className="flex flex-wrap  sm:justify-between pl-6  mb-3 border-b-2 pb-2 border-gray-400 sm:items-center relative w-full sm:flex-row  mobile:flex-col mobile:justify-center mobile:gap-6 mobile:items-left"
           >
             <div className="flex gap-5 items-center">
               <input
                 type="checkbox"
                 checked={task.completed}
                 onChange={() => toggleTask(task.id)}
-                className=" appearance-none h-5 w-5 border border-blue-500 rounded-sm flex cursor-pointer relative checked:bg-blue-500"
+                className=" appearance-none h-5 w-5 border border-blue-500 rounded-sm flex cursor-pointer relative checked:bg-blue-500 mobile:pl-5"
                 //   style={{ backgroundColor: task.completed ? "blue" : "gray" }}
               />
               <input
                 className={`${
                   task.completed ? "line-through text-gray-400" : "text-white"
-                } bg-transparent  outline-none  focus:border-blue-500 focus:border-b-2 focus:backdrop-blur-sm focus:bg-white/30 focus:rounded-md p-2`}
+                } bg-transparent  outline-none  focus:border-blue-500 focus:border-b-2 focus:backdrop-blur-sm focus:bg-white/30 focus:rounded-md p-2 mobile:w-11/12`}
                 value={task.text}
                 onChange={(e) => {
                   updateTask(task.id, { ...task, text: e.target.value });
@@ -132,7 +132,7 @@ const Card = () => {
             </div>
 
             {task.completed && (
-              <span className="absolute px-[2.4rem] left-0 pointer-events-none ">
+              <span className="absolute sm:px-[2.4rem] sm:left-[-0.9rem]  pointer-events-none mobile:top-3">
                 <RiCheckFill
                   size={24} // set custom `width` and `height`
                   color="white" // set `fill` color
@@ -141,7 +141,7 @@ const Card = () => {
               </span>
             )}
 
-            <div className="flex gap-4">
+            <div className="flex gap-4 mobile:justify-between">
               <button
                 id={`saveButton-${task.id}`} //this is so that when pressed enter it works
                 className="ml-5 px-3 py-1 bg-blue-600 text-white rounded-md text-xl"

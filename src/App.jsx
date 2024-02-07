@@ -7,7 +7,7 @@ function App() {
   const [count, setCount] = useState(0);
 
   return (
-    <div className="flex w-full justify-center items-start h-full py-[10rem]">
+    <div className="flex w-full justify-center items-start h-full py-[10rem]  overflow-x-hidden">
       <Card />
     </div>
   );
